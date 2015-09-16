@@ -25,7 +25,8 @@ TreeView = Polymer
         child = new TreeView (@model.getChild key)
         insertionPt.appendChild child
     else
-      console.log "could not find insertion point from selector #{@insertionPointSelector}"
+      console.log "could not find insertion point from selector " +
+        "#{@insertionPointSelector} in instance ", instance
 
     return instance
 

@@ -37,11 +37,16 @@ html(lang='en')
           display: inline-block;
         }
       template
-        div 'Demo Element'
-        div.children
+        div#container 'Demo Element'
 
     script.
       DemoElement = Polymer({
-        is: 'demo-element'
+        is: 'demo-element',
+
+        ready: function () {
+          var children = document.createElement('div');
+          children.classList.add('children');
+          this.$.container.appendChild(children);
+        }
       });
     script(src="TreeViewDemo.js")

@@ -39,13 +39,18 @@
         }
       </style>
       <template>
-        <div>'Demo Element'</div>
-        <div class="children"></div>
+        <div id="container">'Demo Element'</div>
       </template>
     </dom-module>
     <script>
       DemoElement = Polymer({
-        is: 'demo-element'
+        is: 'demo-element',
+      
+        ready: function () {
+          var children = document.createElement('div');
+          children.classList.add('children');
+          this.$.container.appendChild(children);
+        }
       });
     </script>
     <script src="TreeViewDemo.js"></script>
