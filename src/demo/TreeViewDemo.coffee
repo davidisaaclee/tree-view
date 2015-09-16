@@ -10,7 +10,7 @@ treeView.model = new TreeModel rootView
 
 rawModel = new TreeModel type: 'a'
 
-transformer = new TreeTransformer(TreeModel)
+transformer = new TreeTransformer TreeModel
 
 transformer.addNodeCase \
   (val, model) -> val.type is 'a',
@@ -29,7 +29,6 @@ transformer.addNodeCase \
     button.addEventListener 'click', () ->
       model.put ["__reservedkey#{model.childList.length}__"],
         type: 'a'
-      # model._fireChanged()
 
     content = document.createElement 'span'
     content.classList.add 'children'

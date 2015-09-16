@@ -13,7 +13,6 @@ TreeView = Polymer
 
   fill: () ->
     template = @model.value
-    # instance = template.cloneNode true
     instance = template
 
     insertionPt =
