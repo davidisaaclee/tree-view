@@ -12,6 +12,10 @@ TreeView = Polymer
   factoryImpl: (@model) ->
 
   fill: () ->
+    if @model.orderedChildrenKeys.length is 0
+      # nothing to fill with
+      return
+
     template = @model.value
     instance = template
 
