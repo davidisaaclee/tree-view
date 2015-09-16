@@ -12,12 +12,14 @@ TreeView = Polymer
   factoryImpl: (@model) ->
 
   fill: () ->
+    template = @model.value
+    # TODO: How can we clone the template for instances? `cloneNode` doesn't
+    #  copy over event listeners, which is pretty key...
+    instance = template
+
     if @model.orderedChildrenKeys.length is 0
       # nothing to fill with
-      return
-
-    template = @model.value
-    instance = template
+      return instance
 
     insertionPt =
       if instance.matches @insertionPointSelector
