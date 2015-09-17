@@ -45,18 +45,10 @@ TreeView = Polymer
 
   update: (model) ->
     @model = model
+    console.log this
     do @clear
     do @fill
     Polymer.dom(@root).appendChild @instance
-
-  _getInsertionPoint = () ->
-    if (getMatchesFunction @instance) @insertionPointSelector
-    then @instance
-    else
-      r = @instance.querySelector @insertionPointSelector
-      if r?
-      then r
-      else Polymer.dom(@instance).querySelector @insertionPointSelector
 
   ###
   Clears the instance of its children... and itself!
@@ -64,3 +56,12 @@ TreeView = Polymer
   clear: () ->
     if @instance?
       Polymer.dom(@root).removeChild @instance
+
+  _getInsertionPoint: () ->
+    if (getMatchesFunction @instance) @insertionPointSelector
+    then @instance
+    else
+      r = @instance.querySelector @insertionPointSelector
+      if r?
+      then r
+      else Polymer.dom(@instance).querySelector @insertionPointSelector

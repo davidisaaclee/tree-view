@@ -24,8 +24,6 @@ makeBElement = (model) ->
 
     return elt
 
-
-
 treeView = document.querySelector '#tree-view'
 rawModel = new TreeModel type: 'a'
 transformer = new TreeTransformer (val) -> new TreeModel val
