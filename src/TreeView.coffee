@@ -65,4 +65,10 @@ TreeView = Polymer
       r = @instance.querySelector @insertionPointSelector
       if r?
       then r
-      else Polymer.dom(@instance).querySelector @insertionPointSelector
+      else
+        r = Polymer.dom(@instance).querySelector @insertionPointSelector
+        if r?
+        then r
+        else
+          console.error 'Could not find insertion point.'
+          debugger
