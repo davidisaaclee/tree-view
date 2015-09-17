@@ -9,6 +9,8 @@ getMatchesFunction = (element) ->
   then () -> fn.apply element, arguments
   else console.error 'No `matches` method in element ', element
 
+console.log 'TreeView initialiezd'
+
 TreeView = Polymer
   is: 'tree-view'
 
