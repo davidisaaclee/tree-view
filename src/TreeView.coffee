@@ -45,7 +45,6 @@ TreeView = Polymer
 
   update: (model) ->
     @model = model
-    console.log this
     do @clear
     do @fill
     Polymer.dom(@root).appendChild @instance
