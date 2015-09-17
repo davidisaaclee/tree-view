@@ -1,30 +1,37 @@
+# cross-browser support for Element.matches
+getMatchesFunction = (element) ->
+  fn = element.matches ||
+       element.webkitMatchesSelector ||
+       element.mozMatchesSelector ||
+       element.msMatchesSelector ||
+       element.oMatchesSelector
+  if fn?
+  then () -> fn.apply element, arguments
+  else console.error 'No `matches` method in element ', element
+
 TreeView = Polymer
   is: 'tree-view'
 
   properties:
     model:
       type: Object
-      observer: 'update'
     insertionPointSelector:
       type: String
       value: '.children'
 
-  factoryImpl: (@model) ->
+  factoryImpl: (model) ->
+    @instance = null
+    @update model
 
   fill: () ->
-    template = @model.value
-    # TODO: How can we clone the template for instances? `cloneNode` doesn't
-    #  copy over event listeners, which is pretty key...
-    instance = template
+    makeInstance = @model.value
+    @instance = do makeInstance
 
     if @model.orderedChildrenKeys.length is 0
       # nothing to fill with
-      return instance
+      return @instance
 
-    insertionPt =
-      if instance.matches @insertionPointSelector
-      then instance
-      else instance.querySelector @insertionPointSelector
+    insertionPt = @_getInsertionPoint()
 
     if insertionPt?
       @model.orderedChildrenKeys.forEach (key) =>
@@ -32,22 +39,28 @@ TreeView = Polymer
         insertionPt.appendChild child
     else
       console.log "could not find insertion point from selector " +
-        "#{@insertionPointSelector} in instance ", instance
+        "#{@insertionPointSelector} in instance ", @instance
 
-    return instance
+    return @instance
 
-  update: () ->
-    @clear()
-    @async () =>
-      Polymer.dom(@root).appendChild (do @fill)
+  update: (model) ->
+    @model = model
+    do @clear
+    do @fill
+    Polymer.dom(@root).appendChild @instance
 
+  _getInsertionPoint = () ->
+    if (getMatchesFunction @instance) @insertionPointSelector
+    then @instance
+    else
+      r = @instance.querySelector @insertionPointSelector
+      if r?
+      then r
+      else Polymer.dom(@instance).querySelector @insertionPointSelector
+
+  ###
+  Clears the instance of its children... and itself!
+  ###
   clear: () ->
-    instance = @model.value
-    insertionPt =
-      if instance.matches @insertionPointSelector
-      then instance
-      else instance.querySelector @insertionPointSelector
-
-    if insertionPt?
-      Polymer.dom(insertionPt).childNodes.forEach (child) ->
-        Polymer.dom(insertionPt).removeChild child
+    if @instance?
+      Polymer.dom(@root).removeChild @instance
