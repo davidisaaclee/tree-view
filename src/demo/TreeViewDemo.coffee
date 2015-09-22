@@ -25,6 +25,7 @@ makeBElement = (model) ->
     return elt
 
 treeView = document.querySelector '#tree-view'
+# treeView.directAppend = true
 rawModel = new TreeModel type: 'a'
 transformer = new TreeTransformer (val) -> new TreeModel val
 
