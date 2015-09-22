@@ -15,14 +15,28 @@ TreeView = Polymer
   properties:
     model:
       type: Object
+
+    # A selector to choose which element within a node to append children to.
     insertionPointSelector:
       type: String
       value: '.children'
 
-  factoryImpl: (model) ->
+    # Should we append children directly into a node, instead of using
+    #  `insertionPointSelector`?
+    directAppend:
+      type: Boolean
+      value: false
+
+  ###
+  @param [TreeModel] model The `TreeModel` to populate this view.
+  ###
+  factoryImpl: (model, @insertionPointSelector = '.children', @directAppend = false) ->
     @instance = null
     @update model
 
+  ###
+  Fills this view with the model's subviews.
+  ###
   fill: () ->
     makeInstance = @model.value
     @instance = do makeInstance
@@ -35,7 +49,7 @@ TreeView = Polymer
 
     if insertionPt?
       @model.orderedChildrenKeys.forEach (key) =>
-        child = new TreeView (@model.getChild key)
+        child = new TreeView (@model.getChild key), @insertionPointSelector, @directAppend
         insertionPt.appendChild child
     else
       console.log "could not find insertion point from selector " +
@@ -57,10 +71,21 @@ TreeView = Polymer
       Polymer.dom(@root).removeChild @instance
 
   _getInsertionPoint: () ->
-    if (getMatchesFunction @instance) @insertionPointSelector
-    then @instance
+    if @directAppend
+      console.log 'appending to ', @instance
+      @instance
     else
-      r = @instance.querySelector @insertionPointSelector
-      if r?
-      then r
-      else Polymer.dom(@instance).querySelector @insertionPointSelector
+      console.log 'not direct append', this
+      if (getMatchesFunction @instance) @insertionPointSelector
+      then @instance
+      else
+        r = @instance.querySelector @insertionPointSelector
+        if r?
+        then r
+        else
+          r = Polymer.dom(@instance).querySelector @insertionPointSelector
+          if r?
+          then r
+          else
+            console.error 'Could not find insertion point.'
+            debugger
