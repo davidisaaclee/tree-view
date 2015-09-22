@@ -16,21 +16,18 @@ TreeView = Polymer
     model:
       type: Object
 
-    # A selector to choose which element within a node to append children to.
-    insertionPointSelector:
-      type: String
-      value: '.children'
-
-    # Should we append children directly into a node, instead of using
-    #  `insertionPointSelector`?
-    directAppend:
-      type: Boolean
-      value: false
-
   ###
   @param [TreeModel] model The `TreeModel` to populate this view.
+
+  The `value` of `model` and its children should take the form
+
+    # creates a new instance of this node's view
+    instantiate: () -> HTMLElement
+    # given an instance of this node's view, return the element where this
+    #   node's children should be inserted into.
+    getChildrenInsertPoint: HTMLElement -> HTMLElement
   ###
-  factoryImpl: (model, @insertionPointSelector = '.children', @directAppend = false) ->
+  factoryImpl: (model) ->
     @instance = null
     @update model
 
@@ -38,22 +35,18 @@ TreeView = Polymer
   Fills this view with the model's subviews.
   ###
   fill: () ->
-    makeInstance = @model.value
-    @instance = do makeInstance
+    @instance = do @model.value.instantiate
 
     if @model.orderedChildrenKeys.length is 0
       # nothing to fill with
       return @instance
 
-    insertionPt = @_getInsertionPoint()
+    insertionPt = @model.value.getChildrenInsertPoint @instance
 
     if insertionPt?
       @model.orderedChildrenKeys.forEach (key) =>
-        child = new TreeView (@model.getChild key), @insertionPointSelector, @directAppend
+        child = new TreeView (@model.getChild key)
         insertionPt.appendChild child
-    else
-      console.log "could not find insertion point from selector " +
-        "#{@insertionPointSelector} in instance ", @instance
 
     return @instance
 
@@ -69,23 +62,3 @@ TreeView = Polymer
   clear: () ->
     if @instance?
       Polymer.dom(@root).removeChild @instance
-
-  _getInsertionPoint: () ->
-    if @directAppend
-      console.log 'appending to ', @instance
-      @instance
-    else
-      console.log 'not direct append', this
-      if (getMatchesFunction @instance) @insertionPointSelector
-      then @instance
-      else
-        r = @instance.querySelector @insertionPointSelector
-        if r?
-        then r
-        else
-          r = Polymer.dom(@instance).querySelector @insertionPointSelector
-          if r?
-          then r
-          else
-            console.error 'Could not find insertion point.'
-            debugger

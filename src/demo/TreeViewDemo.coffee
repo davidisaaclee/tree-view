@@ -33,7 +33,10 @@ nodeCount = 0
 
 transformer.addNodeCase \
   (val, model) -> val.type is 'a',
-  (val, model) -> makeDemoElement,
+  (val, model) ->
+    instantiate: makeDemoElement
+    # getChildrenInsertPoint: (elm) -> elm.querySelector '.children',
+    getChildrenInsertPoint: (elm) -> elm,
   (val) ->
     r = new TreeModel val
     r.nodeKind = "a#{nodeCount++}"
@@ -41,7 +44,9 @@ transformer.addNodeCase \
 
 transformer.addNodeCase \
   (val, model) -> val.type is 'b',
-  (val, model) -> makeBElement model,
+  (val, model) ->
+    instantiate: makeBElement model
+    getChildrenInsertPoint: (elm) -> elm.querySelector '.children',
   (val) ->
     r = new TreeModel val
     r.nodeKind = "b#{nodeCount++}"
